@@ -1,30 +1,42 @@
 import cv2 as cv
 import pytesseract
 import sys
-import re
+import urlToImg
+import scrapWebImg
+
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+
+UrlToScrap = input('Enter te URL - ')
+WordWanted = input('Search a Word - ')
 
 
-def extractTextToImage(imageFile):
-    pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+imgPaths = scrapWebImg(UrlToScrap)
+checkWordInImg = False
+for path in imgPaths:
+    img = urlToImg(path)
 
-    img = cv.imread(imageFile)
-    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+    # extracting data from img
+    heigthImg, widthImg, _ = img.shape
     boxes = pytesseract.image_to_data(img)
-
-    words = ''
 
     for x, b in enumerate(boxes.splitlines()):
         # prevent null lines
+        checkWordInImg = False
 
         if x != 0:
             b = b.split()
 
-            # only we get the lines that have words
-            if len(b) == 12 and re.search('\w', b[11]):
+            # only we get the lines that have words and transforms for a better word lecture
 
-                words = words + b[11] + ' '
+            if len(b) == 12 and WordWanted.lower() in b[11].lower():
+                x, y, w, h = int(b[6]), int(b[7]), int(b[8]), int(b[9])
+                cv.rectangle(img, (x, y), (w+x, h+y), (0, 0, 255), 3)
 
-    return words
+    if(checkWordInImg):
+        cv.imshow('result', img)
+        cv.waitKey(500)
+
+# return words
 
 
-sys.modules[__name__] = extractTextToImage
+# sys.modules[__name__] = extractTextToImage
