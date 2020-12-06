@@ -9,7 +9,7 @@ ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 
-def scrapWebImg(url):
+def extractAllImgWeb(url):
 
     html = urlopen(url, context=ctx).read()
     soup = BeautifulSoup(html, "html.parser")
@@ -22,4 +22,4 @@ def scrapWebImg(url):
     return imgUrlLinks
 
 
-sys.modules[__name__] = scrapWebImg
+sys.modules[__name__] = extractAllImgWeb

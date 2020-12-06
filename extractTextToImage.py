@@ -3,19 +3,23 @@ import pytesseract
 import sys
 import webbrowser
 import urlToImg
-import scrapWebImg
+import extractAllImgWeb
 import numpy as np
+import atexit
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 UrlToScrap = input('Enter te URL - ')
 WordWanted = input('Search a Word - ')
+counterImgsFounded = 0
 
+imgUrls = extractAllImgWeb(UrlToScrap)
 
-imgPaths = scrapWebImg(UrlToScrap)
+for imgUrl in imgUrls:
+    img = urlToImg(imgUrl)
 
-for path in imgPaths:
-    img = urlToImg(path)
+    if img is None:
+        continue
 
     resized = cv.resize(img, None, fx=1.2, fy=1.2,
                         interpolation=cv.INTER_CUBIC)
@@ -51,13 +55,19 @@ for path in imgPaths:
 
     for word in text.split():
 
-        # only we get the lines that have words and transforms for a better word lecture
-
         if WordWanted.lower() in word.lower():
 
             # open in a browser the url of the imgs that contains the desired word
-            webbrowser.open(path, new=0, autoraise=True)
+            webbrowser.open(imgUrl, new=0, autoraise=True)
+            counterImgsFounded = counterImgsFounded + 1
 
-# return words
 
-# sys.modules[__name__] = extractTextToImage
+def exit_handler():
+    if(counterImgsFounded < 1):
+        print('--Not found any images that contains "%s".--' % (WordWanted))
+    else:
+        print('--Founded % 2d images that contains "%s".--' %
+              (counterImgsFounded, WordWanted))
+
+
+atexit.register(exit_handler)
