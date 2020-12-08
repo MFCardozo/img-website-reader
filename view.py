@@ -2,6 +2,7 @@ from tkinter import *
 import re
 import extractTextToImage
 import threading
+import time
 window = Tk()
 
 window.title("Web IMG Scan")
@@ -34,6 +35,7 @@ labelError.grid(column=1, row=3, ipadx=30, pady=10)
 
 
 def clicked():
+    start = time.time()
     result = None
     url = txtUrl.get()
     word = txtWord.get()
@@ -41,14 +43,22 @@ def clicked():
 
         labelError.configure(text='working', foreground="black")
         btn.configure(state='disabled')
-        result = extractTextToImage(url, word)
+        try:
+            result = extractTextToImage(url, word)
+        except Exception as err:
+            labelError.configure(
+                text='A unexpected error happens,try again.', foreground="red")
+            btn.configure(state='normal')
         if result:
             labelError.configure(text=result, foreground="black")
             btn.configure(state='normal')
+
     else:
         labelError.configure(
             text='Please, enter a valid URL.', foreground="red")
-    print(result)
+    end = time.time()
+
+    print(f"Runtime of the program is {end - start}")
 
 
 btn = Button(window, text="Search",

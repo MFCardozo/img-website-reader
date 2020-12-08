@@ -5,10 +5,10 @@ import webbrowser
 import urlToImg
 import extractAllImgWeb
 import numpy as np
-# import atexit
 
 
 def extractTextToImage(UrlToScrap, wordWanted):
+
     pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
     counterImgsFounded = 0
@@ -16,17 +16,27 @@ def extractTextToImage(UrlToScrap, wordWanted):
     imgUrls = extractAllImgWeb(UrlToScrap)
 
     for imgUrl in imgUrls:
+
         img = urlToImg(imgUrl)
 
         if img is None:
             continue
+        wResize = 1
+        hResize = 1
 
-        resized = cv.resize(img, None, fx=1.2, fy=1.2,
+        if img.shape[1] < 250:
+            wResize = 1.5
+            hResize = 1.5
+        elif img.shape[1] > 599:
+            wResize = .5
+            hResize = .5
+
+        resized = cv.resize(img, None, fx=wResize, fy=hResize,
                             interpolation=cv.INTER_CUBIC)
-        gray = cv.cvtColor(resized, cv.COLOR_BGR2GRAY)
+        # gray = cv.cvtColor(resized, cv.COLOR_BGR2GRAY)
         kernel = np.ones((1, 1), np.uint8)
-        finalImg = cv.dilate(gray, kernel, iterations=1)
-        finalImg = cv.erode(gray, kernel, iterations=1)
+        finalImg = cv.dilate(resized, kernel, iterations=1)
+        finalImg = cv.erode(resized, kernel, iterations=1)
 
         cv.threshold(cv.GaussianBlur(finalImg, (5, 5), 0), 0, 255,
                      cv.THRESH_BINARY + cv.THRESH_OTSU)[1]

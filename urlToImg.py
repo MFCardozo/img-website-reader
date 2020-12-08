@@ -4,7 +4,8 @@ from urllib.request import urlopen
 import numpy as np
 
 
-def urlToImg(url, readFlag=cv.IMREAD_COLOR):
+def urlToImg(url, readFlag=cv.IMREAD_GRAYSCALE):
+
     # download the image, convert it to a NumPy array, and then read
     # it into OpenCV format
     resp = urlopen(url)
