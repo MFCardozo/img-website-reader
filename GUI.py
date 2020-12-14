@@ -9,6 +9,7 @@ window = Tk()
 window.title("Web IMG Scan")
 window.geometry('400x280')
 
+
 title = Label(window, text="Web IMG Scan",
               font=("Arial Bold", 30))
 

@@ -1,3 +1,7 @@
 <H1 align="center"> IMG website reader
   </H1>
 Desktop App that extracts all the images in a URL and then shows all the images that match the desired word. 
+**Tools most relevants:**
+* OpenCV
+* Tesseract
+* beautiful-soup
