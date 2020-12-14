@@ -56,7 +56,8 @@ def extractTextToImage(UrlToScrap, wordWanted):
         cv.adaptiveThreshold(cv.medianBlur(finalImg, 3), 255,
                              cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 31, 2)
 
-        text = pytesseract.image_to_string(finalImg)
+        text = pytesseract.image_to_string(
+            finalImg)
 
     # ignore img without text
 
@@ -72,9 +73,9 @@ def extractTextToImage(UrlToScrap, wordWanted):
                 counterImgsFounded = counterImgsFounded + 1
 
     if(counterImgsFounded < 1):
-        return'--Not found any images that contains "{word}".--'.format(word=wordWanted)
+        return'Not found any images that contains "{word}".'.format(word=wordWanted)
     else:
-        return'--Founded {counter} images that contains "{word}".--'.format(counter=counterImgsFounded, word=wordWanted)
+        return'Founded {counter} images that contains "{word}".'.format(counter=counterImgsFounded, word=wordWanted)
 
 
 sys.modules[__name__] = extractTextToImage

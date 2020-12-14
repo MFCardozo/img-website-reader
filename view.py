@@ -1,8 +1,9 @@
 from tkinter import *
+from tkinter.ttk import *
 import re
 import extractTextToImage
 import threading
-import time
+
 window = Tk()
 
 window.title("Web IMG Scan")
@@ -34,29 +35,43 @@ labelError = Label(window)
 labelError.grid(column=1, row=3, ipadx=30, pady=10)
 
 
+def popupmsg(msg):
+    popup = Tk()
+    popup.wm_title("!")
+    label = Label(popup, text=msg)
+    label.pack(side="top", fill="x", pady=10)
+    B1 = Button(popup, text="Ok", command=popup.destroy)
+    B1.pack()
+    popup.mainloop()
+
+
 def clicked():
-    start = time.time()
+
     result = None
     url = txtUrl.get()
     word = txtWord.get()
     if re.search("^https?://", url) and len(word) > 0 and result is None:
-
-        labelError.configure(text='working', foreground="black")
+        progressBar = Progressbar(window, length=50, mode="indeterminate")
+        progressBar.grid(columnspan=2, row=3,  pady=10)
+        progressBar.start(5)
         btn.configure(state='disabled')
+        labelError.configure(text='')
         try:
             result = extractTextToImage(url, word)
         except Exception as err:
             labelError.configure(
                 text='A unexpected error happens,try again.', foreground="red")
             btn.configure(state='normal')
+            progressBar.destroy()
         if result:
-            labelError.configure(text=result, foreground="black")
+            progressBar.destroy()
+
+            popupmsg(result)
             btn.configure(state='normal')
 
     else:
         labelError.configure(
             text='Please, enter a valid URL.', foreground="red")
-    end = time.time()
 
     print(f"Runtime of the program is {end - start}")
 
