@@ -3,6 +3,7 @@ from tkinter.ttk import *
 import re
 import extractTextToImage
 import threading
+# import time
 
 window = Tk()
 
@@ -47,7 +48,7 @@ def popupmsg(msg):
 
 
 def clicked():
-
+    # start = time.time()
     result = None
     url = txtUrl.get()
     word = txtWord.get()
@@ -66,15 +67,15 @@ def clicked():
             progressBar.destroy()
         if result:
             progressBar.destroy()
-
+            # end = time.time()
             popupmsg(result)
             btn.configure(state='normal')
 
     else:
         labelError.configure(
             text='Please, enter a valid URL.', foreground="red")
-
-    print(f"Runtime of the program is {end - start}")
+    
+    # print(f"Runtime of the program is {end - start}")
 
 
 btn = Button(window, text="Search",

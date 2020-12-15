@@ -14,11 +14,9 @@ def extractAllImgWeb(url):
     soup = BeautifulSoup(html, "html.parser")
     tags = soup('img')
 
-    imgUrlLinks = set()
     for tag in tags:
-        imgUrlLinks.add(tag.get('src', None))
 
-    return imgUrlLinks
+        yield tag.get('src', None)
 
 
 sys.modules[__name__] = extractAllImgWeb
