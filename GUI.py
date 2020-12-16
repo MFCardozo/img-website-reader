@@ -5,6 +5,57 @@ import extractTextToImage
 import threading
 import time
 
+
+def popupmsg(msg):
+    popup = Tk()
+    popup.wm_title("!")
+    label = Label(popup, text=msg)
+    label.pack(side="top", fill="x", pady=10)
+    B1 = Button(popup, text="Ok", command=popup.destroy)
+    B1.pack()
+    popup.mainloop()
+
+
+def startImgExtraction():
+    # start = time.time()
+
+    url = txtUrl.get()
+    word = txtWord.get()
+
+    if not re.search("^https?://", url):
+        labelError.configure(
+            text='Please, enter a valid URL.', foreground="red")
+        return
+
+    if len(word) < 1:
+        labelError.configure(
+            text='Please, enter a word.', foreground="red")
+        return
+
+    progressBar = Progressbar(window, length=50, mode="indeterminate")
+    progressBar.grid(columnspan=2, row=3,  pady=10)
+    progressBar.start(5)
+
+    btn.configure(state='disabled')
+    labelError.configure(text='')
+
+    result = None
+
+    try:
+        result = extractTextToImage(url, word)
+
+    except Exception as err:
+        result = 'A unexpected error happens,try again.'
+
+    finally:
+        progressBar.destroy()
+        popupmsg(result)
+        btn.configure(state='normal')
+
+    # end = time.time()
+    # print('runtime of program is: {time}'.format(time=start-end))
+
+
 window = Tk()
 
 window.title("Web IMG Scan")
@@ -36,55 +87,8 @@ txtWord.grid(column=1, row=2, ipadx=30)
 labelError = Label(window)
 labelError.grid(column=1, row=3, ipadx=30, pady=10)
 
-
-def popupmsg(msg):
-    popup = Tk()
-    popup.wm_title("!")
-    label = Label(popup, text=msg)
-    label.pack(side="top", fill="x", pady=10)
-    B1 = Button(popup, text="Ok", command=popup.destroy)
-    B1.pack()
-    popup.mainloop()
-
-
-def clicked():
-    start = time.time()
-    result = None
-    url = txtUrl.get()
-    word = txtWord.get()
-
-    if not re.search("^https?://", url):
-        labelError.configure(
-            text='Please, enter a valid URL.', foreground="red")
-        return
-
-    if len(word) < 1:
-        labelError.configure(
-            text='Please, enter a word.', foreground="red")
-        return
-
-    progressBar = Progressbar(window, length=50, mode="indeterminate")
-    progressBar.grid(columnspan=2, row=3,  pady=10)
-    progressBar.start(5)
-    btn.configure(state='disabled')
-    labelError.configure(text='')
-    try:
-        result = extractTextToImage(url, word)
-        
-
-    except Exception as err:
-        result='A unexpected error happens,try again.'
-
-    finally:
-        progressBar.destroy()
-        popupmsg(result)
-        btn.configure(state='normal')
-
-    end = time.time()
-
-
 btn = Button(window, text="Search",
-             command=lambda: threading.Thread(target=clicked).start())
+             command=lambda: threading.Thread(target=startImgExtraction).start())
 
 btn.grid(columnspan=3, row=4, pady=20)
 
