@@ -13,10 +13,12 @@ def extractAllImgWeb(url):
     html = urlopen(url, context=ctx).read()
     soup = BeautifulSoup(html, "html.parser")
     tags = soup('img')
-
+    filterDuplicate = set()
     for tag in tags:
 
-        yield tag.get('src', None)
+        filterDuplicate.add(tag.get('src', None))
+
+    return filterDuplicate
 
 
 sys.modules[__name__] = extractAllImgWeb

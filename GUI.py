@@ -3,7 +3,7 @@ from tkinter.ttk import *
 import re
 import extractTextToImage
 import threading
-# import time
+import time
 
 window = Tk()
 
@@ -48,34 +48,39 @@ def popupmsg(msg):
 
 
 def clicked():
-    # start = time.time()
+    start = time.time()
     result = None
     url = txtUrl.get()
     word = txtWord.get()
-    if re.search("^https?://", url) and len(word) > 0 and result is None:
-        progressBar = Progressbar(window, length=50, mode="indeterminate")
-        progressBar.grid(columnspan=2, row=3,  pady=10)
-        progressBar.start(5)
-        btn.configure(state='disabled')
-        labelError.configure(text='')
-        try:
-            result = extractTextToImage(url, word)
-        except Exception as err:
-            labelError.configure(
-                text='A unexpected error happens,try again.', foreground="red")
-            btn.configure(state='normal')
-            progressBar.destroy()
-        if result:
-            progressBar.destroy()
-            # end = time.time()
-            popupmsg(result)
-            btn.configure(state='normal')
 
-    else:
+    if not re.search("^https?://", url):
         labelError.configure(
             text='Please, enter a valid URL.', foreground="red")
-    
-    # print(f"Runtime of the program is {end - start}")
+        return
+
+    if len(word) < 1:
+        labelError.configure(
+            text='Please, enter a word.', foreground="red")
+        return
+
+    progressBar = Progressbar(window, length=50, mode="indeterminate")
+    progressBar.grid(columnspan=2, row=3,  pady=10)
+    progressBar.start(5)
+    btn.configure(state='disabled')
+    labelError.configure(text='')
+    try:
+        result = extractTextToImage(url, word)
+        
+
+    except Exception as err:
+        result='A unexpected error happens,try again.'
+
+    finally:
+        progressBar.destroy()
+        popupmsg(result)
+        btn.configure(state='normal')
+
+    end = time.time()
 
 
 btn = Button(window, text="Search",
